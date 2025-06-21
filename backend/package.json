@@ -1,11 +1,11 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "StockView Backend API",
   "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js",
-    "start": "npm run dev",
+    "start": "node server.js",         // ✅ CHANGED THIS
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -19,5 +19,8 @@
     "mongoose": "^8.16.0",
     "multer": "^2.0.1",
     "multer-storage-cloudinary": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }

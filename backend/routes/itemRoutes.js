@@ -26,19 +26,22 @@ const storage = new CloudinaryStorage({
 });
 const upload = multer({ storage });
 
+
 router.get('/viewitems', async (req, res) => {
-  try {
-    const items = await Item.find();
+    res.send('API is running...');
 
-    if (items.length === 0) {
-      return res.status(404).json({ msg: 'No Items Present' });
-    } else {
-      return res.status(200).json(items);
-    }
+  // try {
+  //   const items = await Item.find();
 
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch items' });
-  }
+  //   if (items.length === 0) {
+  //     return res.status(404).json({ msg: 'No Items Present' });
+  //   } else {
+  //     return res.status(200).json(items);
+  //   }
+
+  // } catch (err) {
+  //   res.status(500).json({ error: 'Failed to fetch items' });
+  // }
 });
 
 

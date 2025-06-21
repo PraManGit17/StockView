@@ -28,20 +28,19 @@ const upload = multer({ storage });
 
 
 router.get('/viewitems', async (req, res) => {
-    res.send('API is running...');
 
-  // try {
-  //   const items = await Item.find();
+  try {
+    const items = await Item.find();
 
-  //   if (items.length === 0) {
-  //     return res.status(404).json({ msg: 'No Items Present' });
-  //   } else {
-  //     return res.status(200).json(items);
-  //   }
+    if (items.length === 0) {
+      return res.status(404).json({ msg: 'No Items Present' });
+    } else {
+      return res.status(200).json(items);
+    }
 
-  // } catch (err) {
-  //   res.status(500).json({ error: 'Failed to fetch items' });
-  // }
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch items' });
+  }
 });
 
 

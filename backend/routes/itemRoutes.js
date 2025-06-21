@@ -16,7 +16,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Set up storage engine
+
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
@@ -26,11 +26,27 @@ const storage = new CloudinaryStorage({
 });
 const upload = multer({ storage });
 
-// POST /api/items
-router.post('/', upload.fields([
+router.get('/viewitems', async (req, res) => {
+  try {
+    const items = await Item.find();
+
+    if (items.length === 0) {
+      return res.status(404).json({ msg: 'No Items Present' });
+    } else {
+      return res.status(200).json(items);
+    }
+
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch items' });
+  }
+});
+
+
+router.post('/postitems', upload.fields([
   { name: 'coverImage', maxCount: 1 },
   { name: 'additionalImages', maxCount: 5 }
 ]), async (req, res) => {
+
   try {
     console.log("FILES:", req.files);
     console.log("BODY:", req.body);

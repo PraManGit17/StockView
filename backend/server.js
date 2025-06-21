@@ -10,11 +10,8 @@ app.use(cors());
 app.use(express.json());
 const PORT = process.env.PORT;
 
-app.get('/api/', (req, res) => {
-  res.json({ message: 'Hello from the server!' });
-});
 
-app.use('/api/items', itemRoutes);
+app.use('/api/', itemRoutes);
 
 
 mongoose

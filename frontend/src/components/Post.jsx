@@ -25,16 +25,12 @@ const Post = () => {
     6: useRef(null),
   };
 
-
-
   const handleClick = (type) => {
     setSelected(type);
   };
 
-
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-
     if (file) {
       setCoverImage(file);
       setFileName(file.name);
@@ -44,21 +40,16 @@ const Post = () => {
     }
   };
 
-
   const handleAddImage = (e) => {
     const file = e.target.files[0];
-
     if (file && images.length < 5) {
       const extension = file.name.split('.').pop().toLowerCase();
       const validExtensions = ['jpg', 'jpeg', 'png'];
-
       if (validExtensions.includes(extension)) {
         setAdditionalImages((prev) => [...prev, file]);
         setImages((prev) => [...prev, file.name]);
       }
     }
-
-
     e.target.value = null;
   };
 
@@ -68,14 +59,12 @@ const Post = () => {
       { opacity: 0, y: -20 },
       { opacity: 1, y: 0, duration: 1.2, delay: 0.2 }
     );
-
     gsap.fromTo(
       buttonRef.current,
       { opacity: 0, y: 30 },
       { opacity: 1, y: 0, duration: 1, delay: 1.5 }
     );
   }, []);
-
 
   useEffect(() => {
     if (post && textRef1.current) {
@@ -84,7 +73,6 @@ const Post = () => {
         { opacity: 0, y: -20 },
         { opacity: 1, y: 0, duration: 1.2, delay: 0.2 }
       );
-
       setStep(1);
     }
   }, [post]);
@@ -99,7 +87,6 @@ const Post = () => {
     }
   }, [step]);
 
-
   const handleNameChange = (e) => {
     if (e.target.value.trim() !== '') setStep(2);
   };
@@ -113,7 +100,7 @@ const Post = () => {
   };
 
   const handleCoverChange = (e) => {
-    handleFileChange(e); // your function
+    handleFileChange(e);
     setStep(5);
   };
 
@@ -122,20 +109,16 @@ const Post = () => {
     setStep(6);
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const formData = new FormData();
     formData.append('name', e.target['item-name'].value);
     formData.append('type', e.target['item-type'].value);
     formData.append('description', e.target['description'].value);
     formData.append('coverImage', coverImage);
-
     additionalImages.forEach((img) => {
       formData.append('additionalImages', img);
     });
-
     try {
       const res = await axios.post('https://stockview-backend-b4gx.onrender.com/api/postitems', formData);
       alert('Item successfully added');
@@ -152,13 +135,13 @@ const Post = () => {
         What would you like to do today?
       </div>
 
-      <div ref={buttonRef} className='w-full px-8 py-4 flex justify-center'>
-        <div className='bg-gray-200 flex items-center font-medium rounded-lg overflow-hidden'>
+      <div ref={buttonRef} className='w-full px-4 py-4 flex justify-center'>
+        <div className='bg-gray-200 flex flex-col sm:flex-row items-center font-medium rounded-lg overflow-hidden w-full max-w-[400px]'>
           <div
-            className={`px-20 py-1.5 cursor-pointer transition-all duration-300 
+            className={`w-full text-center px-6 py-2 cursor-pointer transition-all duration-300
         ${selected === 'post'
                 ? 'bg-black text-white rounded-lg'
-                : 'bg-gray-300 text-black '}`}
+                : 'bg-gray-300 text-black'}`}
             onClick={() => {
               handleClick('post');
               setTimeout(() => {
@@ -169,11 +152,11 @@ const Post = () => {
             Post Item
           </div>
           <div
-            className={`px-20 py-1.5 cursor-pointer transition-all duration-300 
+            className={`w-full text-center px-6 py-2 cursor-pointer transition-all duration-300
         ${selected === 'view'
                 ? 'bg-black text-white rounded-lg'
                 : 'bg-gray-300 text-black'}`}
-            onClick={() => {
+           onClick={() => {
               handleClick('view');
               setTimeout(() => {
                 navigate('/viewitems');
@@ -185,13 +168,11 @@ const Post = () => {
         </div>
       </div>
 
-
       {post && (
-        <div className='w-1/2 flex flex-col items-center py-4'>
+        <div className='w-full md:w-3/4 lg:w-1/2 flex flex-col items-center py-4 px-4'>
           <div ref={textRef1} className='text-lg font-semibold mb-8'>
             Provide Following Details About Your Item
           </div>
-
 
           <form className='w-full flex flex-col gap-4 items-center' onSubmit={handleSubmit}>
             {step >= 1 && (
@@ -206,7 +187,6 @@ const Post = () => {
                 />
               </div>
             )}
-
 
             {step >= 2 && (
               <div ref={refs[2]}
@@ -240,7 +220,6 @@ const Post = () => {
               </div>
             )}
 
-            {/* Item Description */}
             {step >= 3 && (
               <div ref={refs[3]} className='w-[90%] border-2 rounded-xl py-2 px-2 flex flex-col gap-2 bg-black shadow-xl shadow-gray-700'>
                 <div className='font-semibold text-white px-2'>Item : Description</div>
@@ -254,7 +233,6 @@ const Post = () => {
               </div>
             )}
 
-            {/* Cover Image */}
             {step >= 4 && (
               <div ref={refs[4]} className='w-[90%] border-2 rounded-xl py-2 px-2 flex flex-col gap-2 bg-black shadow-xl shadow-gray-700'>
                 <div className='font-semibold text-white px-2'>Item : Cover Image</div>
@@ -274,7 +252,6 @@ const Post = () => {
               </div>
             )}
 
-            {/* Additional Images */}
             {step >= 5 && (
               <div ref={refs[5]} className='w-[90%] border-2 rounded-xl py-2 px-2 flex flex-col gap-2 bg-black shadow-xl shadow-gray-700'>
                 <div className='font-semibold text-white px-2'>Item : Additional Images (Max 5)</div>
@@ -306,7 +283,6 @@ const Post = () => {
               </div>
             )}
 
-            {/* Submit Button */}
             {step >= 6 && (
               <div ref={refs[6]} className='w-[90%] flex justify-center mt-6'>
                 <button
@@ -318,7 +294,6 @@ const Post = () => {
               </div>
             )}
           </form>
-
         </div>
       )}
     </div>

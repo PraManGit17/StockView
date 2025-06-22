@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -42,7 +40,6 @@ const View = () => {
   }, []);
 
   useEffect(() => {
-    // Animate button first
     gsap.fromTo(
       buttonRef.current,
       { opacity: 0, y: 30 },
@@ -55,7 +52,7 @@ const View = () => {
       }
     );
 
-    handleClick('view')
+    handleClick('view');
   }, []);
 
   useEffect(() => {
@@ -69,33 +66,26 @@ const View = () => {
   }, [contentVisible]);
 
   return (
-    <div className='w-full h-screen flex flex-col'>
-      <div className='w-full h-full px-15 flex flex-col gap-2'>
+    <div className='w-full h-full min-h-screen flex flex-col'>
+      <div className='w-full h-full px-4 md:px-15 flex flex-col gap-2'>
 
-
-
-        <div ref={buttonRef} className='w-full px-8 py-4 flex justify-center'>
-          <div className='bg-gray-200 flex items-center font-medium rounded-lg overflow-hidden'>
+        <div ref={buttonRef} className='w-full py-4 flex justify-center'>
+          <div className='bg-gray-200 flex items-center font-medium rounded-lg overflow-hidden text-sm sm:text-base'>
             <div
-              className={`px-20 py-1.5 cursor-pointer transition-all duration-300 
-        ${selected === 'post'
-                  ? 'bg-black text-white rounded-lg'
-                  : 'bg-gray-300 text-black '}`}
+              className={`px-6 sm:px-10 md:px-20 py-1.5 cursor-pointer transition-all duration-300 
+                ${selected === 'post' ? 'bg-black text-white rounded-lg' : 'bg-gray-300 text-black'}`}
               onClick={() => {
                 handleClick('post');
                 setTimeout(() => {
                   navigate('/');
-                  setPost(true);
                 }, 300);
               }}
             >
               Post Item
             </div>
             <div
-              className={`px-20 py-1.5 cursor-pointer transition-all duration-300 
-        ${selected === 'view'
-                  ? 'bg-black text-white rounded-lg'
-                  : 'bg-gray-300 text-black'}`}
+              className={`px-6 sm:px-10 md:px-20 py-1.5 cursor-pointer transition-all duration-300 
+                ${selected === 'view' ? 'bg-black text-white rounded-lg' : 'bg-gray-300 text-black'}`}
               onClick={() => {
                 handleClick('view');
               }}
@@ -107,7 +97,7 @@ const View = () => {
 
         {contentVisible && (
           <div ref={contentRef} className='flex flex-col gap-4'>
-            <div className='w-full text-xl font-medium text-center'>
+            <div className='w-full text-lg sm:text-xl font-medium text-center'>
               Click On Any Card To View Each Item's Description.
             </div>
 
@@ -121,13 +111,13 @@ const View = () => {
                 items.map((item) => (
                   <div
                     key={item._id}
-                    className="w-[50%] sm:w-[35%] md:w-[20%] py-2 rounded-2xl 
+                    className="w-full sm:w-[48%] md:w-[30%] lg:w-[20%] py-2 rounded-2xl 
                       flex flex-col items-center justify-between gap-2 
                       cursor-pointer overflow-hidden bg-black "
                     onClick={() => setSelectedItem(item)}
                   >
-                    <h2 className="text-xl font-semibold text-white">{item.name}</h2>
-                    <div className="w-[95%] h-[200px] flex items-center justify-center bg-white rounded-full">
+                    <h2 className="text-lg sm:text-xl font-semibold text-white">{item.name}</h2>
+                    <div className="w-[95%] h-[180px] sm:h-[200px] flex items-center justify-center bg-white rounded-full">
                       <img
                         src={item.coverImage}
                         alt={item.type}
@@ -141,20 +131,20 @@ const View = () => {
           </div>
         )}
 
-
         {selectedItem && (
-          <div className='fixed h-screen w-full inset-0 bg-black/60 flex justify-center items-center z-50'>
-            <div className='w-[45%] h-full flex items-center'>
+          <div className='fixed h-screen w-full inset-0 bg-black/60 flex justify-center items-center z-50 px-2 sm:px-4'>
+            <div className='w-full sm:w-[90%] md:w-[80%] lg:w-[70%] xl:w-[50%] max-h-full overflow-y-auto flex items-center relative'>
+
               <button
-                className="absolute w-10 h-10 top-25 right-90 text-white text-2xl cursor-pointer bg-black rounded-full"
+                className="absolute top-4 right-4 w-10 h-10 text-white text-2xl cursor-pointer bg-black rounded-full z-50"
                 onClick={() => setSelectedItem(null)}
               >
                 ✕
               </button>
 
-              <div className='w-full bg-white px-6 py-8 flex gap-8 rounded-xl'>
+              <div className='w-full bg-white px-4 sm:px-6 py-6 sm:py-8 flex flex-col md:flex-row gap-6 sm:gap-8 rounded-xl'>
 
-                <div className='w-1/2 flex flex-col gap-4'>
+                <div className='w-full md:w-1/2 flex flex-col gap-4'>
                   <div className='w-full h-[200px] border border-gray-400 bg-gray-200 rounded-2xl p-2'>
                     <img
                       src={selectedItem.coverImage}
@@ -164,7 +154,7 @@ const View = () => {
                   </div>
 
                   <div className='flex flex-col gap-2'>
-                    <h2 className="text-4xl font-bold">{selectedItem.name}</h2>
+                    <h2 className="text-2xl sm:text-4xl font-bold">{selectedItem.name}</h2>
                     <p className="flex flex-col">
                       <span className='font-medium'>Type:</span>
                       <span className='ml-5 font-normal'>{selectedItem.type}</span>
@@ -176,7 +166,7 @@ const View = () => {
                   </div>
                 </div>
 
-                <div className="bg-white p-4 w-full md:w-1/2 rounded-2xl shadow-lg">
+                <div className="bg-white w-full md:w-1/2 rounded-2xl shadow-lg">
                   <Swiper
                     spaceBetween={20}
                     slidesPerView={1}
@@ -188,7 +178,7 @@ const View = () => {
                   >
                     {selectedItem.additionalImages.map((img, index) => (
                       <SwiperSlide key={index} className="flex items-center justify-center">
-                        <div className="w-full h-[250px] flex items-center justify-center bg-gray-100 rounded-xl shadow-sm p-2">
+                        <div className="w-full h-[200px] sm:h-[250px] flex items-center justify-center bg-gray-100 rounded-xl shadow-sm p-2">
                           <img
                             src={img}
                             alt={`img-${index}`}

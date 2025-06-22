@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react';
+
+
+import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
@@ -6,20 +8,28 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import { useNavigate } from 'react-router-dom';
-
+import gsap from 'gsap';
 
 const View = () => {
   const [items, setItems] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); 
-  
+  const [isLoading, setIsLoading] = useState(true);
+  const [selected, setSelected] = useState(null);
+  const [contentVisible, setContentVisible] = useState(false);
+
+  const buttonRef = useRef(null);
+  const contentRef = useRef(null);
+
   const navigate = useNavigate();
 
+  const handleClick = (type) => {
+    setSelected(type);
+  };
 
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const res = await axios.get('https://stockview-backend-b4gx.onrender.com/api/viewitems')
+        const res = await axios.get('https://stockview-backend-b4gx.onrender.com/api/viewitems');
         setItems(res.data);
       } catch (error) {
         console.error('Error fetching items:', error);
@@ -31,85 +41,137 @@ const View = () => {
     fetchItems();
   }, []);
 
-  return (
-    <div className='w-[100%] h-screen flex flex-col'>
+  useEffect(() => {
+    // Animate button first
+    gsap.fromTo(
+      buttonRef.current,
+      { opacity: 0, y: 30 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        delay: 0.5,
+        onComplete: () => setContentVisible(true),
+      }
+    );
 
+    handleClick('view')
+  }, []);
+
+  useEffect(() => {
+    if (contentVisible && contentRef.current) {
+      gsap.fromTo(
+        contentRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 1 }
+      );
+    }
+  }, [contentVisible]);
+
+  return (
+    <div className='w-full h-screen flex flex-col'>
       <div className='w-full h-full px-15 flex flex-col gap-2'>
 
-        <div className='w-full p-8 flex justify-center'>
-          <div className=' bg-gray-200 flex items-center font-medium'>
+
+
+        <div ref={buttonRef} className='w-full px-8 py-4 flex justify-center'>
+          <div className='bg-gray-200 flex items-center font-medium rounded-lg overflow-hidden'>
             <div
-              className='px-20 py-1.5 rounded-xl cursor-pointer hover:bg-gray-300'
-              onClick={() => navigate('/')}
+              className={`px-20 py-1.5 cursor-pointer transition-all duration-300 
+        ${selected === 'post'
+                  ? 'bg-black text-white rounded-lg'
+                  : 'bg-gray-300 text-black '}`}
+              onClick={() => {
+                handleClick('post');
+                setTimeout(() => {
+                  navigate('/');
+                  setPost(true);
+                }, 300);
+              }}
             >
               Post Item
             </div>
-            <div className='rounded-md bg-black text-white px-20 py-1.5'>
+            <div
+              className={`px-20 py-1.5 cursor-pointer transition-all duration-300 
+        ${selected === 'view'
+                  ? 'bg-black text-white rounded-lg'
+                  : 'bg-gray-300 text-black'}`}
+              onClick={() => {
+                handleClick('view');
+              }}
+            >
               View Item
             </div>
           </div>
         </div>
 
-        <div className='w-full text-xl font-medium text-center'>
-          Click On Any Card To View Each Item's Description.
-        </div>
-
-        <div className="w-full bg-gray-50 rounded-xl shadow-xl p-4 flex flex-wrap gap-4 justify-start min-h-[200px]">
-          {isLoading ? (
-            <div className="w-full flex justify-center items-center h-[200px]">
-              <div className="animate-spin rounded-full h-12 w-12 border-4 border-black border-t-transparent"></div>
+        {contentVisible && (
+          <div ref={contentRef} className='flex flex-col gap-4'>
+            <div className='w-full text-xl font-medium text-center'>
+              Click On Any Card To View Each Item's Description.
             </div>
-          ) : (
-            items.map((item) => (
-              <div
-                key={item._id}
-                className="w-[50%] sm:w-[35%] md:w-[20%] py-2 rounded-2xl 
-                   flex flex-col items-center justify-between gap-2 
-                   cursor-pointer overflow-hidden bg-black "
-                onClick={() => setSelectedItem(item)}
-              >
-                <h2 className="text-xl font-semibold text-white">{item.name}</h2>
-                <div className="w-[95%] h-[200px] flex items-center justify-center bg-white rounded-full ">
-                  <img
-                    src={item.coverImage}
-                    alt={item.type}
-                    className="w-full h-full object-cover rounded-xl "
-                  />
+
+            <div className="w-full bg-gray-50 rounded-xl shadow-xl p-4 flex flex-wrap gap-4 justify-start min-h-[200px]">
+              {isLoading ? (
+                <div className="w-full text-lg font-medium  flex flex-col justify-center items-center h-[200px]">
+                  <div className="animate-spin rounded-full h-12 w-12 border-4 border-black border-t-transparent"></div>
+                  Wait Till Items are Loaded
                 </div>
-              </div>
-            ))
-          )}
-        </div>
+              ) : (
+                items.map((item) => (
+                  <div
+                    key={item._id}
+                    className="w-[50%] sm:w-[35%] md:w-[20%] py-2 rounded-2xl 
+                      flex flex-col items-center justify-between gap-2 
+                      cursor-pointer overflow-hidden bg-black "
+                    onClick={() => setSelectedItem(item)}
+                  >
+                    <h2 className="text-xl font-semibold text-white">{item.name}</h2>
+                    <div className="w-[95%] h-[200px] flex items-center justify-center bg-white rounded-full">
+                      <img
+                        src={item.coverImage}
+                        alt={item.type}
+                        className="w-full h-full object-cover rounded-xl"
+                      />
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        )}
+
 
         {selectedItem && (
           <div className='fixed h-screen w-full inset-0 bg-black/60 flex justify-center items-center z-50'>
             <div className='w-[45%] h-full flex items-center'>
               <button
-                className="absolute top-2 right-4 text-black text-xl cursor-pointer"
+                className="absolute w-10 h-10 top-25 right-90 text-white text-2xl cursor-pointer bg-black rounded-full"
                 onClick={() => setSelectedItem(null)}
               >
                 ✕
               </button>
+
               <div className='w-full bg-white px-6 py-8 flex gap-8 rounded-xl'>
 
-                <div className=' w-1/2 flex flex-col gap-4 '>
-                  <div className='w-full h-[200px] border border-gray-400 bg-gray-200 rounded-2xl p-2 '>
+                <div className='w-1/2 flex flex-col gap-4'>
+                  <div className='w-full h-[200px] border border-gray-400 bg-gray-200 rounded-2xl p-2'>
                     <img
                       src={selectedItem.coverImage}
                       alt={selectedItem.type}
-                      className="w-full h-full object-cover rounded-xl "
+                      className="w-full h-full object-cover rounded-xl"
                     />
                   </div>
 
                   <div className='flex flex-col gap-2'>
                     <h2 className="text-4xl font-bold">{selectedItem.name}</h2>
                     <p className="flex flex-col">
-                      <p className='font-medium'>Type:</p>
-                      <p className='ml-5 font-normal'>{selectedItem.type}</p>
+                      <span className='font-medium'>Type:</span>
+                      <span className='ml-5 font-normal'>{selectedItem.type}</span>
                     </p>
                     <p className="flex flex-col">
-                      <p className='font-medium'>Description:</p>
-                      <p className='ml-5 font-normal'>{selectedItem.description}</p>
+                      <span className='font-medium'>Description:</span>
+                      <span className='ml-5 font-normal'>{selectedItem.description}</span>
                     </p>
                   </div>
                 </div>
@@ -144,8 +206,8 @@ const View = () => {
         )}
 
       </div>
-    </div>
-  )
-}
+    </div >
+  );
+};
 
 export default View;

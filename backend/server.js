@@ -3,44 +3,40 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const itemRoutes = require('./routes/itemRoutes');
 const cors = require('cors');
+
 dotenv.config();
 
 const app = express();
 
-// const allowedOrigins = ['http://localhost:5173', 'https://your-react-app.vercel.app'];
-
-// app.use(cors({
-//   origin: function (origin, callback) {
-//     if (!origin || allowedOrigins.includes(origin)) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   },
-//   credentials: true
-// }));
-
-
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://stock-view-puce.vercel.app'
+];
 
 app.use(cors({
-  origin: 'http://localhost:5173'
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
 }));
 
 app.use(express.json());
-const PORT = process.env.PORT;
-
+const PORT = process.env.PORT || 5000;
 
 app.use('/api/', itemRoutes);
-
 
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
-    console.log("StockView DB Connected");
+    console.log("✅ StockView DB Connected");
     app.listen(PORT, () => {
-      console.log(`Server Successfully on PORT: ${PORT}`)
+      console.log(`Server running on PORT: ${PORT}`);
     });
   })
   .catch(err => {
-    console.error(err)
+    console.error("DB Connection Error:", err);
   });

@@ -6,7 +6,7 @@
 
 ## 🔗 Live Demo
 
-- Frontend: https://stock-view-puce.vercel.app/viewitems
+- Frontend: https://stock-view-puce.vercel.app
 - Backend : https://stockview-backend-b4gx.onrender.com 
 
 

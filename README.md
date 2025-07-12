@@ -6,7 +6,7 @@
 
 ## 🔗 Live Demo
 
-- Frontend: https://stock-view-puce.vercel.app/viewitems
+- Frontend: https://stock-view-puce.vercel.app
 - Backend : https://stockview-backend-b4gx.onrender.com 
 
 
@@ -33,19 +33,22 @@
 
 ## 🧩 Project Structure
 
+```bash
 StockView/
 ├── backend/
-│ ├── models/
-│ ├── routes/
-│ ├── server.js
-│ └── .env
+│   ├── models/            
+│   ├── routes/           
+│   ├── server.js          
+│   └── .env              
+│
 ├── frontend/
-│ ├── src/
-│ │ ├── components/
-│ │ │ ├── Post.jsx
-│ │ │ └── View.jsx
-│ ├── public/
-│ └── vite.config.js
+│   ├── public/            
+│   ├── src/
+│   │   ├── components/    
+│   │   │   ├── Post.jsx  
+│   │   │   └── View.jsx   
+│   └── vite.config.js     
+
 
 
 ---

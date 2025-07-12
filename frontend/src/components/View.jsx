@@ -16,6 +16,8 @@ const View = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selected, setSelected] = useState(null);
   const [contentVisible, setContentVisible] = useState(false);
+  const [isEnquiring, setIsEnquiring] = useState(false);
+  const [enquiryMessage, setEnquiryMessage] = useState('');
   const buttonRef = useRef(null);
   const contentRef = useRef(null);
   const navigate = useNavigate();
@@ -65,7 +67,34 @@ const View = () => {
     }
   }, [contentVisible]);
 
+  // const sendEnquiryEmail = (item) => {
+  //   const templateParams = {
+  //     item_name: item.name,
+  //     item_type: item.type,
+  //     item_description: item.description
+  //   };
+
+  //   emailjs.send(
+  //     'service_0ph894v',
+  //     'template_d9840sj',
+  //     templateParams,
+  //     'l_ALLg-7iRuBGN27R'
+  //   ).then(
+  //     (response) => {
+  //       console.log('SUCCESS!', response.status, response.text);
+  //       alert('Enquiry email sent successfully!');
+  //     },
+  //     (err) => {
+  //       console.log('FAILED...', err);
+  //       alert('Failed to send enquiry email.');
+  //     }
+  //   );
+  // };
+
   const sendEnquiryEmail = (item) => {
+    setIsEnquiring(true);
+    setEnquiryMessage('');
+
     const templateParams = {
       item_name: item.name,
       item_type: item.type,
@@ -80,13 +109,15 @@ const View = () => {
     ).then(
       (response) => {
         console.log('SUCCESS!', response.status, response.text);
-        alert('Enquiry email sent successfully!');
+        setEnquiryMessage('✅ Enquiry email sent successfully!');
       },
       (err) => {
         console.log('FAILED...', err);
-        alert('Failed to send enquiry email.');
+        setEnquiryMessage('❌ Failed to send enquiry email.');
       }
-    );
+    ).finally(() => {
+      setIsEnquiring(false);
+    });
   };
 
   return (
@@ -126,7 +157,7 @@ const View = () => {
         </div>
 
         {contentVisible && (
-          <div ref={contentRef} className='flex flex-col gap-4'>
+          <div ref={contentRef} className='flex flex-col items-center justify-center gap-4'>
             <div className='w-full text-xl font-medium text-center'>
               Click On Any Card To View Each Item's Description.
             </div>
@@ -218,10 +249,42 @@ const View = () => {
                     ))}
                   </Swiper>
 
-                  <button onClick={() => sendEnquiryEmail(selectedItem)}
+                  {/* <button onClick={() => sendEnquiryEmail(selectedItem)}
                     className='bg-blue-500 text-white px-4 py-2 rounded-lg w-[40%]'>
                     Enquire
+                  </button> */}
+
+
+                  <button
+                    onClick={() => sendEnquiryEmail(selectedItem)}
+                    disabled={isEnquiring}
+                    className={`w-[40%] px-4 py-2 rounded-lg font-semibold flex items-center justify-center gap-2
+    ${isEnquiring ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'} text-white transition duration-300`}
+                  >
+                    {isEnquiring && (
+                      <svg
+                        className="animate-spin h-5 w-5 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                        />
+                      </svg>
+                    )}
+                    {isEnquiring ? 'Enquiring...' : 'Enquire'}
                   </button>
+
+                  {enquiryMessage && (
+                    <p className={`text-sm font-medium mt-2 ${enquiryMessage.startsWith('✅') ? 'text-green-600' : 'text-red-600'}`}>
+                      {enquiryMessage}
+                    </p>
+                  )}
+
                 </div>
 
               </div>

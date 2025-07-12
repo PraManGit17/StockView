@@ -12,6 +12,8 @@ const Post = () => {
   const [coverImage, setCoverImage] = useState(null);
   const [additionalImages, setAdditionalImages] = useState([]);
   const [step, setStep] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
   const textRef = useRef(null);
   const textRef1 = useRef(null);
   const buttonRef = useRef(null);
@@ -109,8 +111,30 @@ const Post = () => {
     setStep(6);
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   const formData = new FormData();
+  //   formData.append('name', e.target['item-name'].value);
+  //   formData.append('type', e.target['item-type'].value);
+  //   formData.append('description', e.target['description'].value);
+  //   formData.append('coverImage', coverImage);
+  //   additionalImages.forEach((img) => {
+  //     formData.append('additionalImages', img);
+  //   });
+  //   try {
+  //     const res = await axios.post('https://stockview-backend-b4gx.onrender.com/api/postitems', formData);
+  //     alert('Item successfully added');
+  //   } catch (err) {
+  //     console.error(err);
+  //     alert('Something went wrong');
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setMessage('');
+
     const formData = new FormData();
     formData.append('name', e.target['item-name'].value);
     formData.append('type', e.target['item-type'].value);
@@ -119,12 +143,18 @@ const Post = () => {
     additionalImages.forEach((img) => {
       formData.append('additionalImages', img);
     });
+
     try {
-      const res = await axios.post('https://stockview-backend-b4gx.onrender.com/api/postitems', formData);
-      alert('Item successfully added');
+      const res = await axios.post(
+        'https://stockview-backend-b4gx.onrender.com/api/postitems',
+        formData
+      );
+      setMessage('✅ Item successfully added!');
     } catch (err) {
       console.error(err);
-      alert('Something went wrong');
+      setMessage('❌ Something went wrong while posting the item.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -156,7 +186,7 @@ const Post = () => {
         ${selected === 'view'
                 ? 'bg-black text-white rounded-lg'
                 : 'bg-gray-300 text-black'}`}
-           onClick={() => {
+            onClick={() => {
               handleClick('view');
               setTimeout(() => {
                 navigate('/viewitems');
@@ -282,7 +312,7 @@ const Post = () => {
                 )}
               </div>
             )}
-
+            {/* 
             {step >= 6 && (
               <div ref={refs[6]} className='w-[90%] flex justify-center mt-6'>
                 <button
@@ -292,7 +322,49 @@ const Post = () => {
                   Submit Item
                 </button>
               </div>
+            )} */}
+
+            {step >= 6 && (
+              <div ref={refs[6]} className='w-[90%] flex flex-col items-center mt-6 gap-2'>
+                <button
+                  type='submit'
+                  disabled={loading}
+                  className={`bg-black text-white w-[50%] py-2 rounded-xl font-semibold shadow-lg shadow-gray-700 
+        hover:bg-gray-900 transition duration-300 flex items-center justify-center gap-2
+        ${loading ? 'opacity-70 cursor-not-allowed' : ''}
+      `}
+                >
+                  {loading && (
+                    <svg
+                      className="animate-spin h-5 w-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12" cy="12" r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                      />
+                    </svg>
+                  )}
+                  {loading ? 'Submitting...' : 'Submit Item'}
+                </button>
+
+                {message && (
+                  <p className={`text-sm ${message.startsWith('✅') ? 'text-green-600' : 'text-red-600'}`}>
+                    {message}
+                  </p>
+                )}
+              </div>
             )}
+
           </form>
         </div>
       )}
